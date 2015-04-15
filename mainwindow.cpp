@@ -9,6 +9,7 @@
 #include <QMessageBox>
 #include <QKeyEvent>
 #include <iostream>
+#include <QTimer>
 using namespace std;
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -18,12 +19,22 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     UdpInit();
     setUserList();
-    peopleNums = 0;
+    dataInit();
+    timerInit();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::timerInit() {
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(timeToSendParticipant()));
+    timer->start(5000);
+}
+void MainWindow::dataInit() {
+    peopleNums = 0;
 }
 
 void MainWindow::UdpInit() {
@@ -57,9 +68,7 @@ void MainWindow::sendMsg(MessageType type, QString serverAdress) {
     default:
         break;
     }
-    cout << "data length" << data.length() << endl;
     udpSocket->writeDatagram(data, data.length(), QHostAddress::Broadcast, port);
-    cout << "send over" << endl;
 }
 
 void MainWindow::processPendingDatagrams() {
@@ -78,12 +87,15 @@ void MainWindow::processPendingDatagrams() {
             if(ipAddress == localIp) {
                 ui->msgDisplay->setTextColor(Qt::blue);
                 ui->msgDisplay->setCurrentFont(QFont("Times New Roman", 8));
-                ui->msgDisplay->append(ipAddress+" "+localHostName);
-                ui->msgDisplay->setTextColor(Qt::black);
-                ui->msgDisplay->setCurrentFont(QFont("Times New Roman", 12));
-                ui->msgDisplay->append(message);
-                ui->msgDisplay->append(" ");
+            } else {
+                ui->msgDisplay->setTextColor(Qt::green);
+                ui->msgDisplay->setCurrentFont(QFont("Times New Roman", 8));
             }
+            ui->msgDisplay->append(ipAddress+" "+localHostName);
+            ui->msgDisplay->setTextColor(Qt::black);
+            ui->msgDisplay->setCurrentFont(QFont("Times New Roman", 12));
+            ui->msgDisplay->append(message);
+            ui->msgDisplay->append(" ");
             break;
         case NewParticipant:
             in >> localHostName >> ipAddress;
@@ -94,6 +106,34 @@ void MainWindow::processPendingDatagrams() {
         default:
             break;
         }
+    }
+}
+
+void MainWindow::freshUserList(MessageType type, QString ip, QString hostName) {
+    int flag = 1;
+    switch(type) {
+    case NewParticipant:
+        for(int i=0; i<peopleNums; i++) {
+            if(ips[i].toStdString() == ip.toStdString()) {
+                flag = 0;
+                break;
+            }
+        }
+        if(flag)
+            ips[peopleNums++] = ip;
+        break;
+    case PariticipantLeft:
+        for(int i=0; i<peopleNums; i++) {
+            if(ips[i].toStdString() == ip.toStdString())
+            {
+                ips[i]= "";
+                localHostNames[i] = "";
+            }
+        }
+        peopleNums--;
+        break;
+    default:
+        break;
     }
 }
 
@@ -129,7 +169,15 @@ void MainWindow::scanOnlineusers()
 {
 }
 
-
+void MainWindow::timeToRefreshUserList()
+{
+    sendMsg(NewParticipant, "");
+    for(int i=0; i<peopleNums; i++) {
+        model->setItem(i, 0, new QStandardItem(ips[i]));
+        model->setItem(i, 1, new QStandardItem(localHostNames[i]));
+        i++;
+    }
+}
 void MainWindow::on_sendButton_clicked()
 {
     sendMsg(Message, "");
