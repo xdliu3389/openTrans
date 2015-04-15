@@ -6,25 +6,79 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>256</width>
-    <height>426</height>
+    <width>720</width>
+    <height>606</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">background-image: url(C:/Users/Administrator/Desktop/background.jpg);</string>
+  </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QPushButton" name="scanButton">
+   <widget class="QPushButton" name="sendButton">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>130</y>
-      <width>131</width>
-      <height>61</height>
+      <x>360</x>
+      <y>550</y>
+      <width>80</width>
+      <height>25</height>
      </rect>
     </property>
     <property name="text">
-     <string>扫描</string>
+     <string>发送</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="closeButton">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>550</y>
+      <width>80</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>关闭</string>
+    </property>
+   </widget>
+   <widget class="QTextBrowser" name="msgDisplay">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>441</width>
+      <height>451</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <pointsize>18</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="msgSend">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>460</y>
+      <width>441</width>
+      <height>81</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QTableView" name="userList">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>0</y>
+      <width>261</width>
+      <height>321</height>
+     </rect>
     </property>
    </widget>
   </widget>
@@ -33,7 +87,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>256</width>
+     <width>720</width>
      <height>23</height>
     </rect>
    </property>
@@ -46,7 +100,6 @@
     <bool>false</bool>
    </attribute>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
