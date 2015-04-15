@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QStandardItemModel>
 #include <QtNetwork/QUdpSocket>
+#define ipLength 256
 namespace Ui {
 class MainWindow;
 }
@@ -31,17 +32,22 @@ protected:
 private:
     Ui::MainWindow *ui;
     QString localIp;
+    QString ips[ipLength];
+    QString localHostNames[ipLength];
     QUdpSocket *udpSocket;
     qint16 port;
     qint16 peopleNums;
     void scanOnlineusers();
     void setUserList();
     void UdpInit();
+    void timerInit();
+    void dataInit();
+    void freshUserList(MessageType type, QString ip, QString hostName);
 
 private slots:
     void processPendingDatagrams();
     void on_sendButton_clicked();
-
+    void timeToRefreshUserList();
 };
 
 #endif // MAINWINDOW_H
