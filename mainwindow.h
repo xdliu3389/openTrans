@@ -15,8 +15,12 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+private slots:
+    void on_scanButton_clicked();
+
 private:
     Ui::MainWindow *ui;
+    void scanOnlineusers();
 };
 
 #endif // MAINWINDOW_H

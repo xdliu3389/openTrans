@@ -12,3 +12,15 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+void MainWindow::scanOnlineusers()
+{
+
+}
+
+void MainWindow::on_scanButton_clicked()
+{
+    scanOnlineusers();
+}
+
+
