@@ -10,10 +10,10 @@
 #include <QKeyEvent>
 #include <iostream>
 #include <QTimer>
+#include <QFile>
 #include <QFileDialog>
 
 using namespace std;
-
 MainWindow::MainWindow(QWidget *parent):
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -177,13 +177,11 @@ void MainWindow::scanOnlineusers()
 void MainWindow::timeToRefreshUserList()
 {
     sendMsg(NewParticipant, "");
-    cout << "fresh userlist" << endl;
     for(int i=0; i<peopleNums; i++) {
         model->setItem(i, 0, new QStandardItem(ips[i]));
         model->setItem(i, 1, new QStandardItem(localHostNames[i]));
         i++;
     }
-    cout << "fresh finished" << endl;
 }
 void MainWindow::on_sendButton_clicked()
 {
@@ -198,17 +196,28 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 
 void MainWindow::on_selectFile_clicked()
 {
-    if("" == filePath) {
-        QFileDialog *fileDialog = new QFileDialog(this);
-        fileDialog->setWindowTitle(tr("Open Image"));
-        fileDialog->setDirectory(".");
-        if(fileDialog->exec() == QDialog::Accepted)
-            filePath = fileDialog->selectedFiles()[0];
-        cout << filePath.toStdString() << endl;
-        ui->filePath->setText(filePath);
-        ui->selectFile->setText("Send");
-    } else {
-        cout << "sa" << endl;
-
-    }
+    QFileDialog *fileDialog = new QFileDialog(this);
+    fileDialog->setWindowTitle(tr("Open Image"));
+    fileDialog->setDirectory(".");
+    if(fileDialog->exec() == QDialog::Accepted)
+        filePath = fileDialog->selectedFiles()[0];
+    cout << filePath.toStdString() << endl;
+    ui->filePath->setText(filePath);
+    fileThread *a = new fileThread;
+    connect(a, SIGNAL(finished()),a,SLOT(deleteLater()));
+    cout <<"begin"<<endl;
+    a->start();
+    cout <<"end"<<endl;
 }
+void MainWindow::test() {
+    cout << "test win" << endl;
+}
+void fileThread::run() {
+    QFile tmpfile(filePath);
+    tmpfile.open(QIODevice::ReadOnly);
+    QByteArray bytes = tmpfile.readAll();
+    cout<<bytes.data()<<endl;
+    tmpfile.close();
+    w->test();
+}
+

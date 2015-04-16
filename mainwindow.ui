@@ -90,7 +90,7 @@
    <widget class="QPushButton" name="selectFile">
     <property name="geometry">
      <rect>
-      <x>530</x>
+      <x>550</x>
       <y>400</y>
       <width>75</width>
       <height>23</height>
@@ -110,6 +110,19 @@
      </rect>
     </property>
    </widget>
+   <widget class="QPushButton" name="sendFIle">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>400</y>
+      <width>80</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>发送</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -117,7 +130,7 @@
      <x>0</x>
      <y>0</y>
      <width>720</width>
-     <height>23</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

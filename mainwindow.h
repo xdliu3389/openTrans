@@ -4,13 +4,21 @@
 #include <QMainWindow>
 #include <QStandardItemModel>
 #include <QtNetwork/QUdpSocket>
+#include <QThread>
 #define ipLength 256
 namespace Ui {
 class MainWindow;
+class fileTransThread;
 }
-
 enum MessageType{Message, NewParticipant, PariticipantLeft, FileName, Refuse};
+extern QString filePath;
+class fileThread:public QThread
+{
+    Q_OBJECT
 
+public:
+    virtual void run();
+};
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -19,11 +27,12 @@ public:
     QStandardItemModel *model;
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    void sendMsg(MessageType type, QString serverAdress);
+    void test();
 
 protected:
     //void newParticipant(QString localHostName, QString ipAdress);
     //void participantLeft(QString localHostName, QString ipAdress);
-    void sendMsg(MessageType type, QString serverAdress);
     void keyPressEvent(QKeyEvent *event);
 
     QString getIp();
@@ -34,7 +43,6 @@ private:
     QString localIp;
     QString ips[ipLength];
     QString localHostNames[ipLength];
-    QString filePath;
     QUdpSocket *udpSocket;
     qint16 port;
     qint16 peopleNums;
@@ -51,5 +59,6 @@ private slots:
     void timeToRefreshUserList();
     void on_selectFile_clicked();
 };
+extern MainWindow *w;
 
 #endif // MAINWINDOW_H
