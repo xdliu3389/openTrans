@@ -90,7 +90,7 @@
    <widget class="QPushButton" name="selectFile">
     <property name="geometry">
      <rect>
-      <x>530</x>
+      <x>470</x>
       <y>400</y>
       <width>75</width>
       <height>23</height>
@@ -108,6 +108,19 @@
       <width>261</width>
       <height>61</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>600</x>
+      <y>400</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>发送</string>
     </property>
    </widget>
   </widget>
