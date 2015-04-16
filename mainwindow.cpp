@@ -10,9 +10,11 @@
 #include <QKeyEvent>
 #include <iostream>
 #include <QTimer>
+#include <QFileDialog>
+
 using namespace std;
 
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(QWidget *parent):
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
@@ -21,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setUserList();
     dataInit();
     timerInit();
+    timeToRefreshUserList();
 }
 
 MainWindow::~MainWindow()
@@ -30,8 +33,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::timerInit() {
     QTimer *timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(timeToSendParticipant()));
-    timer->start(5000);
+    connect(timer, SIGNAL(timeout()), this, SLOT(timeToRefreshUserList()));
+    timer->start(2000);
 }
 void MainWindow::dataInit() {
     peopleNums = 0;
@@ -86,24 +89,24 @@ void MainWindow::processPendingDatagrams() {
             in >>localHostName >> ipAddress >> message;
             if(ipAddress == localIp) {
                 ui->msgDisplay->setTextColor(Qt::blue);
-                ui->msgDisplay->setCurrentFont(QFont("Times New Roman", 8));
+                ui->msgDisplay->setCurrentFont(QFont("微软雅黑", 10));
             } else {
                 ui->msgDisplay->setTextColor(Qt::green);
                 ui->msgDisplay->setCurrentFont(QFont("Times New Roman", 8));
             }
             ui->msgDisplay->append(ipAddress+" "+localHostName);
             ui->msgDisplay->setTextColor(Qt::black);
-            ui->msgDisplay->setCurrentFont(QFont("Times New Roman", 12));
+            ui->msgDisplay->setCurrentFont(QFont("微软雅黑", 12));
             ui->msgDisplay->append(message);
             ui->msgDisplay->append(" ");
             break;
         case NewParticipant:
             in >> localHostName >> ipAddress;
-            model->setItem(peopleNums, 0, new QStandardItem(ipAddress));
-            model->setItem(peopleNums, 1, new QStandardItem(localHostName));
-            peopleNums++;
+            freshUserList(NewParticipant, ipAddress, localHostName);
             break;
-        default:
+        case PariticipantLeft:
+            in >> localHostName >> ipAddress;
+            freshUserList(PariticipantLeft, ipAddress, localHostName);
             break;
         }
     }
@@ -119,8 +122,10 @@ void MainWindow::freshUserList(MessageType type, QString ip, QString hostName) {
                 break;
             }
         }
-        if(flag)
-            ips[peopleNums++] = ip;
+        if(flag) {
+            ips[peopleNums] = ip;
+            localHostNames[peopleNums++] = hostName;
+        }
         break;
     case PariticipantLeft:
         for(int i=0; i<peopleNums; i++) {
@@ -172,11 +177,13 @@ void MainWindow::scanOnlineusers()
 void MainWindow::timeToRefreshUserList()
 {
     sendMsg(NewParticipant, "");
+    cout << "fresh userlist" << endl;
     for(int i=0; i<peopleNums; i++) {
         model->setItem(i, 0, new QStandardItem(ips[i]));
         model->setItem(i, 1, new QStandardItem(localHostNames[i]));
         i++;
     }
+    cout << "fresh finished" << endl;
 }
 void MainWindow::on_sendButton_clicked()
 {
@@ -186,5 +193,22 @@ void MainWindow::on_sendButton_clicked()
 void MainWindow::keyPressEvent(QKeyEvent *event) {
     if(event->modifiers() == Qt::ControlModifier && (event->key() == Qt::Key_Return)) {
         sendMsg(Message, "");
+    }
+}
+
+void MainWindow::on_selectFile_clicked()
+{
+    if("" == filePath) {
+        QFileDialog *fileDialog = new QFileDialog(this);
+        fileDialog->setWindowTitle(tr("Open Image"));
+        fileDialog->setDirectory(".");
+        if(fileDialog->exec() == QDialog::Accepted)
+            filePath = fileDialog->selectedFiles()[0];
+        cout << filePath.toStdString() << endl;
+        ui->filePath->setText(filePath);
+        ui->selectFile->setText("Send");
+    } else {
+        cout << "sa" << endl;
+
     }
 }

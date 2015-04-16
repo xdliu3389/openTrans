@@ -34,6 +34,7 @@ private:
     QString localIp;
     QString ips[ipLength];
     QString localHostNames[ipLength];
+    QString filePath;
     QUdpSocket *udpSocket;
     qint16 port;
     qint16 peopleNums;
@@ -48,6 +49,7 @@ private slots:
     void processPendingDatagrams();
     void on_sendButton_clicked();
     void timeToRefreshUserList();
+    void on_selectFile_clicked();
 };
 
 #endif // MAINWINDOW_H
